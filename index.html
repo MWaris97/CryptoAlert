@@ -7,6 +7,20 @@
         <title>CryptoAlert</title>
         <script src="script.js">
         </script>
+        <style>
+            #logs {
+                -moz-appearance: textfield-multiline;
+                -webkit-appearance: textarea;
+                resize: none;
+                border: 1px solid gray;
+                font: medium -moz-fixed;
+                font: -webkit-small-control;
+                height: 200px;
+                overflow: auto;
+                padding: 2px;
+                width: 700px;
+            }
+        </style>
     </head>
     <body>
         <select name="pair" id="pair" onchange="fillPriceBox()">
@@ -35,6 +49,12 @@
         <ul id="alertList">
 
         </ul>
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <div id="logs"></div>
     </body>
     <script>
         if (localStorage.Alerts) {

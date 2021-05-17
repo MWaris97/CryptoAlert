@@ -97,9 +97,11 @@ function priceAlert(pairAlertInfo) {
         newPrice = getPrice(pairAlertInfo.symbol);
         if (pairAlertInfo.condition === "gt" && newPrice >= pairAlertInfo.targetPrice) {
             alertSound.play();
+            document.getElementById("logs").innerHTML += "<h3>" + pairAlertInfo.symbol + "      <span style='color: green;'>" + newPrice + "</span></h3>";
         }
         else if (pairAlertInfo.condition === "lt" && newPrice <= pairAlertInfo.targetPrice) {
             alertSound.play();
+            document.getElementById("logs").innerHTML += "<h3>" + pairAlertInfo.symbol + "      <span style='color: red;'>" + newPrice + "</span></h3>";
         }
         else {
             alertSound.stop();
