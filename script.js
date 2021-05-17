@@ -79,13 +79,21 @@ function addAlert() {
     localStorage.Alerts = JSON.stringify(localAlerts);
 }
 
-function removeAlert(pairSymbol){
-    var localAlerts = JSON.parse(localStorage.Alerts);
-    clearInterval(localAlerts[pairSymbol].interval);
-    delete localAlerts[pairSymbol];
-    alertSound.stop();
+function removeAlert(pairSymbol = 'all'){
 
-    localStorage.Alerts = JSON.stringify(localAlerts);
+    var localAlerts = JSON.parse(localStorage.Alerts);
+    if (pairSymbol === 'all') {
+        for (key in localAlerts){
+            clearInterval(localAlerts[key].interval);
+        }
+        localStorage.removeItem('Alerts');
+    }
+    else {
+        clearInterval(localAlerts[pairSymbol].interval);
+        delete localAlerts[pairSymbol];
+        localStorage.Alerts = JSON.stringify(localAlerts);
+    }
+    alertSound.stop();
 }
 
 function priceAlert(pairAlertInfo) {
