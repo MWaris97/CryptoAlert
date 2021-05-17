@@ -10,6 +10,14 @@
     </head>
     <body>
         <select name="pair" id="pair" onchange="fillPriceBox()">
+            <option value="">Select any</option>
+        </select>
+        <br>
+        <br>
+
+        <select name="condition" id="condition">
+            <option value="gt">Greater than</option>
+            <option value="lt">Less than</option>
         </select>
         <br>
         <br>
@@ -17,6 +25,7 @@
         <input type="number" name="price" id="price">
         <br>
         <br>
+
         <input type="button" value="Add alert" onclick="addAlert()">
         <input type="button" value="Remove alert" onclick="removeAlert()">
 

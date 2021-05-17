@@ -1,5 +1,8 @@
 var globalInterval;
 var targetPrice;
+var localStrg = {
+    "ETHBTC": ""
+};
 
 
 class AlertInfo {
@@ -10,7 +13,7 @@ class AlertInfo {
     // active -> Mark alert active/inactive for the coin pair
     // condition -> Trigger alert if the current price is greater than / less than the target price (gt/lt)
     
-    constructor(symbol, targetPrice, mute = false, active = true, condition, interval = null) {
+    constructor(symbol, targetPrice, condition, interval = null, mute = false, active = true) {
         this.symbol = symbol;
         this.targetPrice = targetPrice;
         this.mute = mute;
@@ -60,15 +63,18 @@ function fillPriceBox() {
 function addAlert() {
     var pairSymbol = document.getElementById("pair");
     var alertList = document.getElementById("alertList");
+    // var condition = document.getElementById("condition").value;
     targetPrice = document.getElementById("price").value;
     var selectedValue = pairSymbol.options[pairSymbol.selectedIndex].value;
-    console.log(pairSymbol)
-    console.log(selectedValue)
-
     
     var el = document.createElement("li");
     el.textContent = selectedValue;
     alertList.appendChild(el);
+
+    var tempAlert = new AlertInfo(selectedValue, targetPrice, document.getElementById("condition").value);
+    console.log(tempAlert.symbol);
+    localStrg[tempAlert.symbol] = tempAlert;
+    console.log(localStrg)
 
     priceAlert(selectedValue);
 }
@@ -86,13 +92,9 @@ function priceAlert(symbol) {
         
         if (newPrice >= targetPrice) {
             alertSound.play();
-            // alert('Price hit');
-            // alertSound.stop();
         }
         else {
             alertSound.stop();
-            // alert('Price hit');
-            // alertSound.stop();
         }
     }, 2000);
 }
@@ -130,4 +132,4 @@ function sound(src) {
     this.stop = function(){
       this.sound.pause();
     }
-  }
+}
