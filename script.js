@@ -1,8 +1,4 @@
 var globalInterval;
-var targetPrice;
-// var localStrg = {
-//     "ETHBTC": ""
-// };
 
 
 class AlertInfo {
@@ -23,13 +19,20 @@ class AlertInfo {
     }
 }
 
-// var alertObj = {
-//     symbol: "ETHBTC",
-//     targetPrice: 1.0,
-//     mute: false,
-//     active: true,
-//     condition: "gt/lt"
-// };
+function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.play = function(){
+      this.sound.play();
+    }
+    this.stop = function(){
+      this.sound.pause();
+    }
+}
 
 var req = new XMLHttpRequest();
 
@@ -37,13 +40,11 @@ req.onreadystatechange = function(){
     if (this.readyState == 4 && this.status == 200) {
         var _data = this;
         var pairSymbol = document.getElementById("pair");
-        var symbList = [];
         JSON.parse(_data.response).symbols.forEach(element => {
             var el = document.createElement("option");
             el.textContent = element.symbol;
             el.value = element.symbol;
             pairSymbol.appendChild(el);
-            //  symbList.push(element.symbol);
         });
     }
     else if(this.readyState == 4) {
@@ -54,7 +55,6 @@ req.onreadystatechange = function(){
 req.open("GET", "https://api.binance.com/api/v3/exchangeInfo", true);
 req.send();
 
-
 function fillPriceBox() {
     var pairSymbol = document.getElementById("pair");
     document.getElementById("price").value = getPrice(pairSymbol.options[pairSymbol.selectedIndex].value);
@@ -63,7 +63,7 @@ function fillPriceBox() {
 function addAlert() {
     var pairSymbol = document.getElementById("pair");
     var alertList = document.getElementById("alertList");
-    targetPrice = document.getElementById("price").value;
+    var targetPrice = document.getElementById("price").value;
     var selectedValue = pairSymbol.options[pairSymbol.selectedIndex].value;
     
     var el = document.createElement("li");
@@ -71,28 +71,35 @@ function addAlert() {
     alertList.appendChild(el);
 
     var pairAlertInfo = new AlertInfo(selectedValue, targetPrice, document.getElementById("condition").value);
-    console.log(pairAlertInfo.symbol);
-    localStorage.setItem(pairAlertInfo.symbol, pairAlertInfo);
-    console.log(localStorage)
 
     priceAlert(pairAlertInfo);
+
+    var localAlerts = localStorage.Alerts ? JSON.parse(localStorage.Alerts) : {};
+    localAlerts[pairAlertInfo.symbol] = pairAlertInfo
+    localStorage.Alerts = JSON.stringify(localAlerts);
 }
 
-function removeAlert(){
-    clearInterval(globalInterval);
+function removeAlert(pairSymbol){
+    console.log(pairSymbol);
+    var localAlerts = JSON.parse(localStorage.Alerts);
+    console.log(localAlerts[pairSymbol].interval);
+    clearInterval(localAlerts[pairSymbol].interval);
+    delete localAlerts[pairSymbol];
+
+    localStorage.Alerts = JSON.stringify(localAlerts);
 }
 
 function priceAlert(pairAlertInfo) {
     var alertSound = new sound("siren.mp3");
     var newPrice;
 
-    globalInterval = setInterval(function(){
+    
+    pairAlertInfo.interval = setInterval(function(){
         newPrice = getPrice(pairAlertInfo.symbol);
-        
-        if (pairAlertInfo.condition === "gt" && newPrice >= targetPrice) {
+        if (pairAlertInfo.condition === "gt" && newPrice >= pairAlertInfo.targetPrice) {
             alertSound.play();
         }
-        else if (pairAlertInfo.condition === "lt" && newPrice <= targetPrice) {
+        else if (pairAlertInfo.condition === "lt" && newPrice <= pairAlertInfo.targetPrice) {
             alertSound.play();
         }
         else {
@@ -118,20 +125,4 @@ function getPrice(symbol) {
     req.send();
 
     return tempPrice;
-}
-
-
-function sound(src) {
-    this.sound = document.createElement("audio");
-    this.sound.src = src;
-    this.sound.setAttribute("preload", "auto");
-    this.sound.setAttribute("controls", "none");
-    this.sound.style.display = "none";
-    document.body.appendChild(this.sound);
-    this.play = function(){
-      this.sound.play();
-    }
-    this.stop = function(){
-      this.sound.pause();
-    }
 }

@@ -27,7 +27,7 @@
         <br>
 
         <input type="button" value="Add alert" onclick="addAlert()">
-        <input type="button" value="Remove alert" onclick="removeAlert()">
+        <input type="button" value="Remove alert" onclick="removeAlert('ETHBTC')">
 
         <br>
         <br>
@@ -36,4 +36,17 @@
 
         </ul>
     </body>
+    <script>
+        // console.log(localStorage)
+        if (localStorage.Alerts) {
+            var localAlertJson = JSON.parse(localStorage.Alerts);
+            for (key in localAlertJson) {
+                var alertList = document.getElementById("alertList");
+                var el = document.createElement("li");
+                el.textContent = localAlertJson[key].symbol;
+                alertList.appendChild(el);
+                priceAlert(localAlertJson[key]);
+            }
+        }
+    </script>
 </html>
