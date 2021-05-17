@@ -1,4 +1,4 @@
-var globalInterval;
+// var globalInterval;
 var alertSound;
 
 class AlertInfo {
@@ -80,9 +80,7 @@ function addAlert() {
 }
 
 function removeAlert(pairSymbol){
-    console.log(pairSymbol);
     var localAlerts = JSON.parse(localStorage.Alerts);
-    console.log(localAlerts[pairSymbol].interval);
     clearInterval(localAlerts[pairSymbol].interval);
     delete localAlerts[pairSymbol];
     alertSound.stop();
@@ -109,20 +107,19 @@ function priceAlert(pairAlertInfo) {
     }, 2000);
 }
 
-function getPrice(symbol) {
+function getPrice(symbol, async = false) {
     var req = new XMLHttpRequest();
     var tempPrice = null;
     req.onreadystatechange = function(){
         if (this.readyState == 4 && this.status == 200) {
             var _data = this;
-            console.log(JSON.parse(_data.response).price);
             tempPrice = JSON.parse(_data.response).price;
         }
         else if(this.readyState == 4) {
             console.log('err')
         }
     }
-    req.open("GET", "https://api.binance.com/api/v3/ticker/price?symbol=" + symbol, false);
+    req.open("GET", "https://api.binance.com/api/v3/ticker/price?symbol=" + symbol, async);
     req.send();
 
     return tempPrice;
