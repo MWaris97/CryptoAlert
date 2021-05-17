@@ -1,8 +1,8 @@
 var globalInterval;
 var targetPrice;
-var localStrg = {
-    "ETHBTC": ""
-};
+// var localStrg = {
+//     "ETHBTC": ""
+// };
 
 
 class AlertInfo {
@@ -63,7 +63,6 @@ function fillPriceBox() {
 function addAlert() {
     var pairSymbol = document.getElementById("pair");
     var alertList = document.getElementById("alertList");
-    // var condition = document.getElementById("condition").value;
     targetPrice = document.getElementById("price").value;
     var selectedValue = pairSymbol.options[pairSymbol.selectedIndex].value;
     
@@ -71,26 +70,29 @@ function addAlert() {
     el.textContent = selectedValue;
     alertList.appendChild(el);
 
-    var tempAlert = new AlertInfo(selectedValue, targetPrice, document.getElementById("condition").value);
-    console.log(tempAlert.symbol);
-    localStrg[tempAlert.symbol] = tempAlert;
-    console.log(localStrg)
+    var pairAlertInfo = new AlertInfo(selectedValue, targetPrice, document.getElementById("condition").value);
+    console.log(pairAlertInfo.symbol);
+    localStorage.setItem(pairAlertInfo.symbol, pairAlertInfo);
+    console.log(localStorage)
 
-    priceAlert(selectedValue);
+    priceAlert(pairAlertInfo);
 }
 
 function removeAlert(){
     clearInterval(globalInterval);
 }
 
-function priceAlert(symbol) {
+function priceAlert(pairAlertInfo) {
     var alertSound = new sound("siren.mp3");
     var newPrice;
 
     globalInterval = setInterval(function(){
-        newPrice = getPrice(symbol);
+        newPrice = getPrice(pairAlertInfo.symbol);
         
-        if (newPrice >= targetPrice) {
+        if (pairAlertInfo.condition === "gt" && newPrice >= targetPrice) {
+            alertSound.play();
+        }
+        else if (pairAlertInfo.condition === "lt" && newPrice <= targetPrice) {
             alertSound.play();
         }
         else {
