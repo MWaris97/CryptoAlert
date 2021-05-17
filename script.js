@@ -1,5 +1,5 @@
 var globalInterval;
-
+var alertSound;
 
 class AlertInfo {
 
@@ -85,12 +85,13 @@ function removeAlert(pairSymbol){
     console.log(localAlerts[pairSymbol].interval);
     clearInterval(localAlerts[pairSymbol].interval);
     delete localAlerts[pairSymbol];
+    alertSound.stop();
 
     localStorage.Alerts = JSON.stringify(localAlerts);
 }
 
 function priceAlert(pairAlertInfo) {
-    var alertSound = new sound("siren.mp3");
+    alertSound = new sound("siren.mp3");
     var newPrice;
 
     
